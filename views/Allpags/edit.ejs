@@ -1,0 +1,85 @@
+<% layout('layouts/boilerplate') %>
+
+<section class="form-page">
+  <div class="form-container">
+    <p class="section-label">Owner Panel</p>
+    <h2>Edit Sweet</h2>
+
+    <form action="/products/<%= data._id %>?_method=PATCH" method="POST" enctype="multipart/form-data" class="sweet-form">
+
+      <div class="form-group">
+        <label for="name">Sweet Name</label>
+        <input type="text" id="name" name="name" value="<%= data.name %>" required/>
+      </div>
+
+      <div class="form-group">
+        <label for="price">Price (Rs. per kg)</label>
+        <input type="number" id="price" name="price" value="<%= data.price %>" min="0" required/>
+      </div>
+
+      <div class="form-group">
+        <label for="category">Category</label>
+        <select id="category" name="category" required>
+          <% ['Ladoo','Barfi','Halwa','Mithai','Dry Fruits','Seasonal','Other'].forEach(function(cat) { %>
+            <option value="<%= cat %>" <%= data.category === cat ? 'selected' : '' %>><%= cat %></option>
+          <% }); %>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Product Image</label>
+        <div class="upload-box" id="uploadBox">
+          <input type="file" id="image" name="image" accept="image/*" onchange="previewImage(event)"/>
+          <div class="upload-placeholder" id="uploadPlaceholder">
+            
+            <div class="upload-icon">&#128247;</div>
+            <p>Click to change image</p>
+            <span>JPG, PNG or WEBP — max 5MB</span>
+          </div>
+          <img id="imagePreview"
+  src="<%= data.image || '' %>"
+  alt="Preview"
+  class="image-preview"/>
+        </div>
+        <p class="upload-note">Leave empty to keep the current image.</p>
+      </div>
+
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea id="description" name="description" rows="4"><%= data.description %></textarea>
+      </div>
+
+      <div class="form-btns">
+        <button type="submit" class="btn-primary">Save Changes</button>
+        <a href="/products/<%= data._id %>" class="btn-outline">Cancel</a>
+      </div>
+    </form>
+  </div>
+</section>
+
+<script>
+  window.onload = function() {
+    var img = document.getElementById('imagePreview');
+    var placeholder = document.getElementById('uploadPlaceholder');
+    if (img.src && img.src !== window.location.href) {
+      img.style.display = 'block';
+      placeholder.style.display = 'none';
+    } else {
+      img.style.display = 'none';
+      placeholder.style.display = 'flex';
+    }
+  };
+
+  function previewImage(event) {
+    var file = event.target.files[0];
+    if (file) {
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        document.getElementById('imagePreview').src = e.target.result;
+        document.getElementById('imagePreview').style.display = 'block';
+        document.getElementById('uploadPlaceholder').style.display = 'none';
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+</script>

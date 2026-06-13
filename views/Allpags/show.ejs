@@ -1,0 +1,128 @@
+<% layout('layouts/boilerplate') %>
+
+<section class="show-page">
+  <div class="show-container">
+    <div class="show-image">
+      <img src="<%= product.image %>" alt="<%= product.name %>" />
+      <span class="product-badge big-badge"><%= product.category %></span>
+    </div>
+    <div class="show-details">
+      <a href="/products" class="back-link">&larr; Back to All Sweets</a>
+      <h1 class="show-title"><%= product.name %></h1>
+      <p class="show-price">&#8377;<%= product.price %> <span>per kg</span></p>
+      <p class="show-desc">
+        <%= product.description %> //? product.description : 'A delicious
+        traditional sweet crafted with the finest ingredients.' %>
+      </p>
+
+      <div class="show-actions">
+        <% if(isOwner){ %>
+          <a href="/products/<%= product._id %>/edit" class="btn-primary"
+          >Edit Product</a
+        >
+        <form
+          action="/products/<%= product._id %>?_method=DELETE"
+          method="POST"
+          onsubmit="return confirm('Delete this product?');"
+        >
+          <button type="submit" class="btn-danger">Delete</button>
+        </form>
+          <% } %>
+        
+        <button class="btn-primary" onclick="toggleOrderForm()">Order Now</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ORDER FORM -->
+  <div class="order-section" style="display: none;">
+    <div class="order-form-box">
+      <p class="section-label">Place Your Order</p>
+      <h2>Order <%= product.name %></h2>
+      <p class="order-sub">
+        Fill in your details and we will deliver fresh to your door.
+      </p>
+
+      <form action="/orders" method="POST" class="sweet-form">
+        <input type="hidden" name="product" value="<%= product._id %>" />
+        <input type="hidden" name="pricePerKg" value="<%= product.price %>" />
+
+        <div class="form-group">
+          <label for="customerName">Your Name</label>
+          <input
+            type="text"
+            id="customerName"
+            name="customerName"
+            placeholder="e.g. Ramesh Sharma"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Phone Number</label>
+          <input
+            type="text"
+            id="phone"
+            name="phone"
+            placeholder="e.g. 9876543210"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="address">Delivery Address</label>
+          <textarea
+            id="address"
+            name="address"
+            rows="3"
+            placeholder="Full address with area and city..."
+            required
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="quantity">Quantity (kg)</label>
+          <input
+            type="number"
+            id="quantity"
+            name="quantity"
+            placeholder="e.g. 1"
+            min="0.5"
+            step="0.5"
+            required
+            oninput="calcTotal(this.value)"
+          />
+        </div>
+
+        <div class="total-display" id="totalDisplay" style="display: none">
+          <span>Total Amount:</span>
+          <strong id="totalAmt"></strong>
+        </div>
+
+        <div class="form-btns">
+          <button type="submit" class="btn-primary btn-lg">Place Order</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<script>
+  function calcTotal(qty) {
+    let price = parseInt("<%= product.price %>");
+    let total = price * parseFloat(qty || 0);
+    if (total > 0) {
+      document.getElementById("totalDisplay").style.display = "flex";
+      document.getElementById("totalAmt").innerText = "Rs. " + total.toFixed(2);
+    } else {
+      document.getElementById("totalDisplay").style.display = "none";
+    }
+  }
+  function toggleOrderForm() {
+    var form = document.querySelector('.order-section');
+    if (form.style.display === 'none') {
+      form.style.display = 'flex';
+      form.scrollIntoView({ behavior: 'smooth' });
+    } 
+  }
+</script>

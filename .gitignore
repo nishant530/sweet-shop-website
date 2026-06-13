@@ -1,0 +1,12 @@
+# Dependencies
+node_modules/
+
+# Environment variables - NEVER share this file
+.env
+
+# Uploaded images
+public/images/products/
+
+# OS files
+.DS_Store
+Thumbs.db

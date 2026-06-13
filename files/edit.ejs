@@ -1,0 +1,44 @@
+<% layout('layouts/boilerplate') %>
+
+<section class="form-page">
+  <div class="form-container">
+    <p class="section-label">Owner Panel</p>
+    <h2>Edit Sweet</h2>
+
+    <form action="/products/<%= data._id %>?_method=PATCH" method="POST" class="sweet-form">
+      <div class="form-group">
+        <label for="name">Sweet Name</label>
+        <input type="text" id="name" name="name" value="<%= data.name %>" required/>
+      </div>
+
+      <div class="form-group">
+        <label for="price">Price (₹ per kg)</label>
+        <input type="number" id="price" name="price" value="<%= data.price %>" min="0" required/>
+      </div>
+
+      <div class="form-group">
+        <label for="category">Category</label>
+        <select id="category" name="category" required>
+          <% ['Ladoo','Barfi','Halwa','Mithai','Dry Fruits','Seasonal','Other'].forEach(cat => { %>
+            <option value="<%= cat %>" <%= data.category === cat ? 'selected' : '' %>><%= cat %></option>
+          <% }) %>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="image">Image URL</label>
+        <input type="text" id="image" name="image" value="<%= data.image %>"/>
+      </div>
+
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea id="description" name="description" rows="4"><%= data.description %></textarea>
+      </div>
+
+      <div class="form-btns">
+        <button type="submit" class="btn-primary">Save Changes</button>
+        <a href="/products/<%= data._id %>" class="btn-outline">Cancel</a>
+      </div>
+    </form>
+  </div>
+</section>

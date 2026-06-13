@@ -1,0 +1,45 @@
+<% layout('layouts/boilerplate') %>
+
+<section class="success-page">
+  <div class="success-box">
+    <div class="success-icon">&#10003;</div>
+    <h1>Order Placed!</h1>
+    <p class="success-msg">
+      Thank you, <strong><%= order.customerName %></strong>! Your order has been
+      received.
+    </p>
+
+    <div class="order-summary">
+      <div class="summary-row">
+        <span>Product</span>
+        <strong><%= order.product.name %></strong>
+      </div>
+      <div class="summary-row">
+        <span>Quantity</span>
+        <strong><%= order.quantity %> kg</strong>
+      </div>
+      <div class="summary-row">
+        <span>Total Amount</span>
+        <strong>&#8377;<%= order.totalPrice %></strong>
+      </div>
+      <div class="summary-row">
+        <span>Delivery Address</span>
+        <strong><%= order.address %></strong>
+      </div>
+      <div class="summary-row">
+        <span>Status</span>
+        <strong class="status-badge status-pending"><%= order.status %></strong>
+      </div>
+    </div>
+
+    <p class="success-note">
+      We will call you on <strong><%= order.phone %></strong> to confirm your
+      order.
+    </p>
+
+    <div class="success-btns">
+      <a href="/products" class="btn-primary">Order More Sweets</a>
+      <a href="/" class="btn-outline">Back to Home</a>
+    </div>
+  </div>
+</section>

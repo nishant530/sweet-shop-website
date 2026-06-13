@@ -1,0 +1,85 @@
+<% layout('layouts/boilerplate') %>
+
+<section class="dashboard-page">
+  <div class="dashboard-header">
+    <p class="section-label">Owner Panel</p>
+    <h2>Orders Dashboard</h2>
+    <p class="products-sub">All customer orders in one place</p>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-num"><%= orders.length %></div>
+      <div class="stat-label">Total Orders</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num"><%= orders.filter(o => o.status === 'Pending').length %></div>
+      <div class="stat-label">Pending</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num"><%= orders.filter(o => o.status === 'Delivered').length %></div>
+      <div class="stat-label">Delivered</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">&#8377;<%= orders.reduce((sum, o) => sum + o.totalPrice, 0).toFixed(0) %></div>
+      <div class="stat-label">Total Revenue</div>
+    </div>
+  </div>
+
+  <% if (orders.length === 0) { %>
+    <div class="empty-state">
+      <div class="empty-icon">&#128230;</div>
+      <h3>No orders yet!</h3>
+      <p>Orders will appear here once customers place them.</p>
+    </div>
+  <% } else { %>
+    <div class="orders-table-wrap">
+      <table class="orders-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Customer</th>
+            <th>Phone</th>
+            <th>Product</th>
+            <th>Qty (kg)</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% orders.forEach((order, i) => { %>
+            <tr>
+              <td><%= i + 1 %></td>
+              <td><strong><%= order.customerName %></strong><br/><small><%= order.address %></small></td>
+              <td><%= order.phone %></td>
+              <td><%= order.product ? order.product.name : 'Deleted Product' %></td>
+              <td><%= order.quantity %></td>
+              <td>&#8377;<%= order.totalPrice %></td>
+              <td>
+                <span class="status-badge status-<%= order.status.toLowerCase().replace(/ /g, '-') %>">
+                  <%= order.status %>
+                </span>
+              </td>
+              <td><%= new Date(order.createdAt).toLocaleDateString('en-IN') %></td>
+              <td>
+                <form action="/orders/<%= order._id %>/status" method="POST" class="status-form">
+                  <select name="status" class="status-select">
+                    <% ['Pending','Confirmed','Out for Delivery','Delivered','Cancelled'].forEach(s => { %>
+                      <option value="<%= s %>" <%= order.status === s ? 'selected' : '' %>><%= s %></option>
+                    <% }) %>
+                  </select>
+                  <button type="submit" class="btn-small">Update</button>
+                  
+                 
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% } %>
+</section>

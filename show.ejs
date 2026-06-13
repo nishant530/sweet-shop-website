@@ -1,0 +1,23 @@
+<% layout('layouts/boilerplate') %>
+
+<section class="show-page">
+  <div class="show-container">
+    <div class="show-image">
+      <img src="<%= product.image %>" alt="<%= product.name %>"/>
+      <span class="product-badge big-badge"><%= product.category %></span>
+    </div>
+    <div class="show-details">
+      <a href="/products" class="back-link">← Back to All Sweets</a>
+      <h1 class="show-title"><%= product.name %></h1>
+      <p class="show-price">₹<%= product.price %> <span>per kg</span></p>
+      <p class="show-desc"><%= product.description || 'A delicious traditional sweet crafted with the finest ingredients.' %></p>
+
+      <div class="show-actions">
+        <a href="/products/<%= product._id %>/edit" class="btn-primary">Edit Product</a>
+        <form action="/products/<%= product._id %>?_method=DELETE" method="POST" onsubmit="return confirm('Delete this product?')">
+          <button type="submit" class="btn-danger">Delete</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>

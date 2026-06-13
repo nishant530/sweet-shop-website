@@ -1,0 +1,23 @@
+{
+  "name": "jmb-part-2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "connect-flash": "^0.1.1",
+    "dotenv": "^17.4.2",
+    "ejs": "^5.0.2",
+    "ejs-mate": "^4.0.0",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "method-override": "^3.0.0",
+    "mongoose": "^9.6.2",
+    "multer": "^2.1.1"
+  }
+}

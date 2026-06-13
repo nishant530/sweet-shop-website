@@ -1,0 +1,41 @@
+<% layout('layouts/boilerplate') %>
+
+<section class="products-page">
+  <div class="products-header">
+    <p class="section-label">Our Collection</p>
+    <h2>All Sweets</h2>
+    <p class="products-sub">Handcrafted with love, made fresh every day</p>
+  </div>
+
+  <% if (data.length === 0) { %>
+    <div class="empty-state">
+      <div class="empty-icon">🍬</div>
+      <h3>No sweets added yet!</h3>
+      <p>Start by adding your first product.</p>
+      <a href="/products/new" class="btn-primary">Add Sweet</a>
+    </div>
+  <% } else { %>
+    <div class="products-grid">
+      <% for (let product of data) { %>
+        <div class="product-card">
+          <div class="product-img-wrap">
+            <img src="<%= product.image %>" alt="<%= product.name %>" class="product-img"/>
+            <span class="product-badge"><%= product.category %></span>
+          </div>
+          <div class="product-info">
+            <h3 class="product-name"><%= product.name %></h3>
+            <p class="product-desc"><%= product.description ? product.description.substring(0, 70) + '...' : 'A delicious traditional sweet.' %></p>
+            <div class="product-footer">
+              <span class="product-price">&#8377;<%= product.price %>/kg</span>
+              <a href="/products/<%= product._id %>" class="btn-small">View</a>
+            </div>
+          </div>
+        </div>
+      <% } %>
+    </div>
+  <% } %>
+
+  <!-- <div class="products-add-btn">
+    <a href="/products/new" class="btn-primary">+ Add New Sweet</a>
+  </div> -->
+</section>
