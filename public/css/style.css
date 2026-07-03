@@ -89,6 +89,9 @@ img {
   font-weight: 700 !important;
   transition: background 0.2s !important;
 }
+.hburger-menu {
+  display: none;
+}
 .btn-nav:hover {
   background: var(--saffron-dark) !important;
 }
@@ -275,6 +278,24 @@ img {
   transform: translateY(-4px);
   box-shadow: var(--shadow);
 }
+@media (max-width: 600px) {
+  .features {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(130px, 1fr));
+    gap: 1rem;
+    padding: 2rem 2rem;
+  }
+  .feature-card {
+    padding: 1rem 0.75rem;
+    text-align: center;
+    border: 1px solid var(--cream-dark);
+
+    margin-bottom: 1rem;
+    transition:
+      transform 0.2s,
+      box-shadow 0.2s;
+  }
+}
 .feat-icon {
   font-size: 2.5rem;
   margin-bottom: 1rem;
@@ -358,6 +379,7 @@ img {
   font-size: 2.5rem;
   margin-bottom: 1rem;
 }
+
 .cta-banner p {
   font-size: 1.1rem;
   opacity: 0.85;
@@ -366,6 +388,15 @@ img {
 .cta-banner .btn-primary {
   background: var(--white);
   color: var(--saffron-dark);
+}
+@media (max-width: 600px) {
+  .cta-banner {
+    padding: 2.5rem 1rem;
+  }
+  .cta-banner h2 {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
 }
 .cta-banner .btn-primary:hover {
   background: var(--cream);
@@ -394,6 +425,7 @@ img {
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 2rem;
 }
+
 .product-card {
   background: var(--white);
   border-radius: var(--radius);
@@ -418,6 +450,7 @@ img {
   height: 100%;
   object-fit: cover;
 }
+
 .product-badge {
   position: absolute;
   top: 12px;
@@ -461,6 +494,18 @@ img {
   margin-top: 3rem;
 }
 
+@media (max-width: 600px) {
+  .products-grid {
+    grid-template-columns: repeat(2, minmax(130px, 1fr));
+    gap: 1rem;
+  }
+  .product-img-wrap {
+    height: 160px;
+  }
+  .product-info {
+    padding: 1rem;
+  }
+}
 /* EMPTY STATE */
 .empty-state {
   text-align: center;
@@ -503,8 +548,11 @@ img {
 .show-image img {
   width: 100%;
   height: 400px;
+  margin: 1.5rem;
+  border-radius: 1rem;
   object-fit: cover;
 }
+
 .big-badge {
   font-size: 0.9rem;
   padding: 0.4rem 1rem;
@@ -519,6 +567,7 @@ img {
   display: inline-block;
   margin-bottom: 1.5rem;
 }
+
 .back-link:hover {
   text-decoration: underline;
 }
@@ -551,6 +600,40 @@ img {
   flex-wrap: wrap;
 }
 
+@media (max-width: 600px) {
+  .show-container {
+    gap: 0;
+  }
+  .show-image img {
+    height: 250px;
+    margin: 0.5rem;
+    border-radius: 0.5rem;
+  }
+  /* .show-details {
+    padding: 2rem 2.5rem 2.5rem 0;
+  } */
+  .back-link {
+    display: none;
+  }
+  .show-title {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+  }
+  .show-price {
+    font-size: 1.5rem;
+
+    margin-bottom: 1.2rem;
+  }
+  .show-price span {
+    font-size: 0.8rem;
+  }
+  .show-desc {
+    color: var(--text-light);
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.8;
+  }
+}
 /* ===== FORM PAGE ===== */
 .form-page {
   padding: 4rem;
@@ -684,6 +767,17 @@ img {
   padding: 4rem;
   display: flex;
   justify-content: center;
+}
+
+@media (max-width: 600px) {
+  .order-section {
+    background: var(--cream);
+    width: 100%;
+    padding: 0;
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+  }
 }
 .order-form-box {
   background: var(--white);
@@ -827,6 +921,11 @@ img {
 .dashboard-page {
   padding: 4rem;
 }
+@media (max-width: 600px) {
+  .dashboard-page {
+    padding: 1rem;
+  }
+}
 .dashboard-header {
   text-align: center;
   margin-bottom: 3rem;
@@ -913,7 +1012,110 @@ img {
   color: var(--text);
   cursor: pointer;
 }
+@media (max-width: 600px) {
+  /* Table layout ko block me badalna taaki cards ban sakein */
+  .orders-table,
+  .orders-table thead,
+  .orders-table tbody,
+  .orders-table th,
+  .orders-table td,
+  .orders-table tr {
+    display: block;
+  }
 
+  /* Table headers ko chupa dena */
+  .orders-table thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+
+  /* Har row ko ek Card ka look dena */
+  .orders-table tr {
+    border: 1px solid var(--cream-dark);
+    margin-bottom: 1.5rem;
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 0.5rem 1rem;
+    box-shadow: var(--shadow);
+  }
+
+  /* Har cell (column) ko design karna aur flex box lagana */
+  .orders-table td {
+    border: none;
+    border-bottom: 1px dashed var(--cream-dark);
+    position: relative;
+    padding: 0.75rem 0;
+    padding-left: 45%; /* Left side me labels ke liye jagah chhodna */
+    font-size: 0.88rem;
+    text-align: right; /* Content right side me dikhega */
+  }
+
+  .orders-table td:last-child {
+    border-bottom: none; /* Last cell se border hatana */
+  }
+
+  /* CSS Pseudo-element se labels generate karna */
+  .orders-table td::before {
+    position: absolute;
+    top: 0.75rem;
+    left: 0;
+    width: 40%;
+    padding-right: 10px;
+    white-space: nowrap;
+    text-align: left;
+    font-weight: 700;
+    color: var(--brown);
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+  }
+
+  /* CSS ke zariye data label set karna (Aapke EJS columns ke sequence ke hisab se) */
+  .orders-table td:nth-of-type(1)::before {
+    content: "Order #";
+  }
+  .orders-table td:nth-of-type(2)::before {
+    content: "Customer";
+  }
+  .orders-table td:nth-of-type(3)::before {
+    content: "Phone";
+  }
+  .orders-table td:nth-of-type(4)::before {
+    content: "Product";
+  }
+  .orders-table td:nth-of-type(5)::before {
+    content: "Qty (KG)";
+  }
+  .orders-table td:nth-of-type(6)::before {
+    content: "Total";
+  }
+  .orders-table td:nth-of-type(7)::before {
+    content: "Status";
+  }
+  .orders-table td:nth-of-type(8)::before {
+    content: "Date";
+  }
+  .orders-table td:nth-of-type(9)::before {
+    content: "Action";
+  }
+
+  /* Mobile par Customer block text ko right side align karna */
+  .orders-table td small {
+    display: block;
+    text-align: right;
+  }
+
+  /* Form aur Buttons ko responsive banana */
+  .status-form {
+    justify-content: flex-end;
+    width: 100%;
+  }
+  .status-select {
+    width: auto;
+    max-width: 130px;
+  }
+}
 /* ===== ALERT ===== */
 .alert-error {
   background: #f8d7da;
@@ -923,18 +1125,6 @@ img {
   padding: 0.75rem 1rem;
   margin-bottom: 1.5rem;
   font-weight: 600;
-}
-
-@media (max-width: 900px) {
-  .order-section {
-    padding: 2rem 1.5rem;
-  }
-  .order-form-box {
-    padding: 2rem;
-  }
-  .dashboard-page {
-    padding: 2rem 1rem;
-  }
 }
 
 /* ===== FLASH MESSAGES ===== */
@@ -1037,4 +1227,59 @@ img {
   color: var(--text-light);
   font-size: 0.82rem;
   margin-top: 0.4rem;
+}
+
+#hburger-menu {
+  display: none;
+}
+/* ===== MOBILE NAVBAR MEDIA QUERY ===== */
+@media (max-width: 600px) {
+  .navbar {
+    padding: 1rem; /* Choti screens par padding kam karne ke liye */
+  }
+
+  .nav-logo .nav-brand {
+    display: block;
+    font-size: 1rem;
+  }
+
+  #hburger-menu {
+    display: block !important;
+    cursor: pointer;
+    z-index: 101;
+  }
+
+  /* Nav links ko dropdown/overlay banana */
+  .nav-links {
+    display: none; /* By default chupa rahega */
+    flex-direction: column;
+    position: absolute;
+    top: 100%; /* Navbar ke theek niche se shuru hoga */
+    left: 0;
+    width: 100%;
+    background: var(--white);
+    padding: 1.5rem;
+    box-shadow: 0 4px 12px rgba(92, 51, 23, 0.1);
+    gap: 1.5rem;
+    text-align: center;
+    z-index: 99;
+  }
+
+  .nav-links.active {
+    display: flex;
+  }
+
+  .nav-links li {
+    width: 100%;
+  }
+
+  .nav-links a {
+    display: block;
+    width: 100%;
+    padding: 0.5rem 0;
+  }
+
+  .nav-links li:has(#hburger-menu) {
+    display: none;
+  }
 }

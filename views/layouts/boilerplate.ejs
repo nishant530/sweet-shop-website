@@ -9,39 +9,33 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 </head>
 <body>
-
-  <!-- NAVBAR -->
+<!-- NAVBAR -->
   <nav class="navbar">
     <div class="nav-logo">
       <img src="/images/JMBlogo.png" alt="JMB Logo" class="logo-img"/>
       <span class="nav-brand">Jodhpur Mishthan Bhandar</span>
     </div>
-    <ul class="nav-links">
+    
+    <!-- Links sirf sweets aur login/dashboard ke liye -->
+    <ul class="nav-links" id="nav-links">
       <li><a href="/">Home</a></li>
       <li><a href="/products">Our Sweets</a></li>
       <% if (isOwner) { %>
         <li><a href="/products/new" class="btn-nav">+ Add Sweet</a></li>
         <li><a href="/owner/dashboard" class="btn-nav">Dashboard</a></li>
-        <li><a href="/owner/logout">Logout</a></li>
+        <li><a href="/owner/logout" class="btn-nav">Logout</a></li>
       <% } else { %>
         <li><a href="/owner/login" class="btn-nav">Owner Login</a></li>
       <% } %>
     </ul>
+
+    <!-- Hamburger Menu ko UL ke bahar rakha hai taaki ye hamesha accessible rahe -->
+    <a class="btn-nav" id="hburger-menu"><i class="fa-solid fa-bars"></i></a>
   </nav>
-  
-
-
-
-  <!-- FLASH MESSAGES -->
+   <!-- FLASH MESSAGES -->
   <% if (success && success.length > 0) { %>
     <div class="flash flash-success">
       <span>&#10003; <%= success[0] %></span>
-      <button onclick="this.parentElement.remove()">&#10005;</button>
-    </div>
-  <% } %>
-  <% if (error && error.length > 0) { %>
-    <div class="flash flash-error">
-      <span>&#9888; <%= error[0] %></span>
       <button onclick="this.parentElement.remove()">&#10005;</button>
     </div>
   <% } %>
@@ -59,7 +53,24 @@
       <p class="footer-copy">&copy; 2025 JMB. All rights reserved.</p>
     </div>
   </footer>
-  
-</body>
 
+
+ 
+  <script>
+  const hamburger = document.getElementById('hburger-menu');
+  const navLinks = document.getElementById('nav-links');
+
+  hamburger.addEventListener('click', () => {
+    navLinks.classList.toggle('active');
+    
+    // Optional: Click karne par icon ko bars se 'X' (close) mein badalne ke liye
+    const icon = hamburger.querySelector('i');
+    if(navLinks.classList.contains('active')) {
+      icon.classList.replace('fa-bars', 'fa-xmark');
+    } else {
+      icon.classList.replace('fa-xmark', 'fa-bars');
+    }
+  });
+</script>
+</body>
 </html>
