@@ -7,6 +7,8 @@ const path = require("path");
 const session = require("express-session");
 const flash = require("connect-flash");
 const multer = require("multer");
+const cloudinary = require("cloudinary").v2;
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const Product = require("./models/product.js");
 const Order = require("./models/order.js");
 const ejsMate = require("ejs-mate");
@@ -15,27 +17,22 @@ const ejsMate = require("ejs-mate");
 const OWNER_USERNAME = process.env.OWNER_USERNAME;
 const OWNER_PASSWORD = process.env.OWNER_PASSWORD;
 
-// ===== MULTER SETUP =====
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "public/images/products");
-  },
-  filename: function (req, file, cb) {
-    const uniqueName =
-      Date.now() + "-" + file.originalname.replace(/\s+/g, "-");
-    cb(null, uniqueName);
+// ===== CLOUDINARY SETUP =====
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "jmb-products",
+    allowed_formats: ["jpg", "jpeg", "png", "webp"],
   },
 });
-const fileFilter = (req, file, cb) => {
-  const allowed = ["image/jpeg", "image/png", "image/webp", "image/jpg"];
-  if (allowed.includes(file.mimetype)) cb(null, true);
-  else cb(new Error("Only JPG, PNG and WEBP images are allowed!"), false);
-};
-const upload = multer({
-  storage,
-  fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 },
-});
+
+const upload = multer({ storage });
 
 app.engine("ejs", ejsMate);
 app.use(express.urlencoded({ extended: true }));
@@ -92,7 +89,7 @@ app.get("/products/new", ownerOnly, (req, res) => {
 app.post("/products", ownerOnly, upload.single("image"), async (req, res) => {
   const productData = { ...req.body };
   if (req.file) {
-    productData.image = "/images/products/" + req.file.filename;
+    productData.image = req.file.path;
   }
   let newProduct = new Product(productData);
   await newProduct.save();
@@ -114,7 +111,7 @@ app.patch(
     let { id } = req.params;
     const updateData = { ...req.body };
     if (req.file) {
-      updateData.image = "/images/products/" + req.file.filename;
+      updateData.image = req.file.path;
     }
     let updated = await Product.findByIdAndUpdate(id, updateData, {
       new: true,
