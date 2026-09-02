@@ -63,6 +63,31 @@ function ownerOnly(req, res, next) {
   res.redirect("/owner/login");
 }
 
+//sms ke liye hai
+// ===== SMS FUNCTION =====
+async function sendSMS(number, message) {
+  try {
+    const response = await fetch("https://www.fast2sms.com/dev/bulkV2", {
+      method: "POST",
+      headers: {
+        authorization: process.env.FAST2SMS_API_KEY,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        route: "q",
+        message: message,
+        language: "english",
+        flash: 0,
+        numbers: number,
+      }),
+    });
+    const data = await response.json();
+    console.log("SMS sent:", data);
+  } catch (err) {
+    console.log("SMS error:", err);
+  }
+}
+
 main()
   .then(() => console.log("connection successful"))
   .catch((err) => console.log(err));
@@ -149,6 +174,13 @@ app.post("/orders", async (req, res) => {
   });
   await newOrder.save();
   const populatedOrder = await Order.findById(newOrder._id).populate("product");
+
+  // Owner ko SMS bhejne ke liye
+  await sendSMS(
+    process.env.OWNER_PHONE,
+    `New Order! Customer: ${customerName}, Product: ${populatedOrder.product.name}, Qty: ${quantity}kg, Total: Rs.${totalPrice}, Phone: ${phone}`,
+  );
+
   req.flash("success", "Your order has been placed successfully!");
   res.render("Allpags/order-success.ejs", { order: populatedOrder });
 });
@@ -160,6 +192,13 @@ app.post("/orders/:id/status", ownerOnly, async (req, res) => {
     { status: req.body.status },
     { new: true },
   );
+
+  //customer ko sms jayega yaha se
+  await sendSMS(
+    updated.phone,
+    `Dear ${updated.customerName}, your order for ${updated.product.name} is now "${updated.status}". Thank you for ordering from Jodhpur Mishthan Bhandar!`,
+  );
+
   req.flash("success", `Order status updated to "${updated.status}".`);
   res.redirect("/owner/dashboard");
 });
