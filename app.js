@@ -15,10 +15,13 @@ const ejsMate = require("ejs-mate");
 const Razorpay = require("razorpay");
 
 //Razorpay add kara
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET,
-});
+let razorpay = null;
+if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET) {
+  razorpay = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET,
+  });
+}
 
 // ===== OWNER CREDENTIALS (loaded from .env) =====
 const OWNER_USERNAME = process.env.OWNER_USERNAME;
@@ -252,15 +255,22 @@ app.get("/owner/dashboard", ownerOnly, async (req, res) => {
 
 // Razorpay order create
 app.post("/create-order", async (req, res) => {
+  if (!razorpay) {
+    return res.json({ error: "Razorpay not configured yet!" });
+  }
   const { amount } = req.body;
-  console.log("Amount received:", amount);
   const options = {
     amount: amount * 100,
     currency: "INR",
     receipt: "order_" + Date.now(),
   };
-  const order = await razorpay.orders.create(options);
-  res.json(order);
+  try {
+    const order = await razorpay.orders.create(options);
+    res.json(order);
+  } catch (err) {
+    console.log("Razorpay error:", err);
+    res.json({ error: err.message });
+  }
 });
 
 // Payment verify
