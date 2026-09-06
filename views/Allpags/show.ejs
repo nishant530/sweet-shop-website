@@ -34,7 +34,7 @@
   </div>
 
   <!-- ORDER FORM -->
-  <div class="order-section" style="display: none;">
+  <div class="order-section" id="orderForm" style="display: none;">
     <div class="order-form-box">
       <p class="section-label">Place Your Order</p>
       <h2>Order <%= product.name %></h2>
@@ -99,29 +99,102 @@
         </div>
 
         <div class="form-btns">
-          <button type="submit" class="btn-primary btn-lg">Place Order</button>
+          <button type="button" class="btn-primary btn-lg" onclick="initiatePayment()">
+            Pay & Place Order
+          </button>
+          <button type="button" class="btn-outline" onclick="toggleOrderForm()">Cancel</button>
         </div>
       </form>
     </div>
   </div>
 </section>
-
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
+  var pricePerKg = parseInt('<%= product.price %>');
+  var productId = '<%= product._id %>';
+
   function calcTotal(qty) {
-    let price = parseInt("<%= product.price %>");
-    let total = price * parseFloat(qty || 0);
+    var total = pricePerKg * parseFloat(qty || 0);
     if (total > 0) {
-      document.getElementById("totalDisplay").style.display = "flex";
-      document.getElementById("totalAmt").innerText = "Rs. " + total.toFixed(2);
+      document.getElementById('totalDisplay').style.display = 'flex';
+      document.getElementById('totalAmt').innerText = 'Rs. ' + total.toFixed(2);
     } else {
-      document.getElementById("totalDisplay").style.display = "none";
+      document.getElementById('totalDisplay').style.display = 'none';
     }
   }
+
   function toggleOrderForm() {
-    var form = document.querySelector('.order-section');
+    var form = document.getElementById('orderForm');
     if (form.style.display === 'none') {
-      form.style.display = 'flex';
+      form.style.display = 'block';
       form.scrollIntoView({ behavior: 'smooth' });
-    } 
+    } else {
+      form.style.display = 'none';
+    }
+  }
+
+  async function initiatePayment() {
+    var customerName = document.getElementById('customerName').value;
+    var phone = document.getElementById('phone').value;
+    var address = document.getElementById('address').value;
+    var quantity = document.getElementById('quantity').value;
+
+    if (!customerName || !phone || !address || !quantity) {
+      alert('Please fill all fields!');
+      return;
+    }
+
+    var totalAmount = pricePerKg * parseFloat(quantity);
+
+    var response = await fetch('/create-order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ amount: totalAmount })
+    });
+    var order = await response.json();
+
+    var options = {
+      key: '<%= razorpayKey %>',
+      amount: order.amount,
+      currency: 'INR',
+      name: 'Jodhpur Mishthan Bhandar',
+      description: '<%= product.name %>',
+      order_id: order.id,
+      handler: async function(paymentResponse) {
+        var verifyResponse = await fetch('/verify-payment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            razorpay_order_id: paymentResponse.razorpay_order_id,
+            razorpay_payment_id: paymentResponse.razorpay_payment_id,
+            razorpay_signature: paymentResponse.razorpay_signature,
+            orderData: {
+              product: productId,
+              customerName: customerName,
+              phone: phone,
+              address: address,
+              quantity: quantity,
+              pricePerKg: pricePerKg
+            }
+          })
+        });
+        var result = await verifyResponse.json();
+        if (result.success) {
+          window.location.href = '/orders/success/' + result.orderId;
+        } else {
+          alert('Payment failed! Please try again.');
+        }
+      },
+      prefill: {
+        name: customerName,
+        contact: phone
+      },
+      theme: {
+        color: '#E8821A'
+      }
+    };
+
+    var rzp = new Razorpay(options);
+    rzp.open();
   }
 </script>

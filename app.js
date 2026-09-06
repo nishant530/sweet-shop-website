@@ -12,6 +12,13 @@ const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const Product = require("./models/product.js");
 const Order = require("./models/order.js");
 const ejsMate = require("ejs-mate");
+const Razorpay = require("razorpay");
+
+//Razorpay add kara
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
+});
 
 // ===== OWNER CREDENTIALS (loaded from .env) =====
 const OWNER_USERNAME = process.env.OWNER_USERNAME;
@@ -156,7 +163,10 @@ app.delete("/products/:id", ownerOnly, async (req, res) => {
 app.get("/products/:id", async (req, res) => {
   const { id } = req.params;
   const product = await Product.findById(id);
-  res.render("Allpags/show.ejs", { product });
+  res.render("Allpags/show.ejs", {
+    product,
+    razorpayKey: process.env.RAZORPAY_KEY_ID,
+  });
 });
 
 // ===== ORDERS =====
@@ -237,6 +247,64 @@ app.get("/owner/logout", (req, res) => {
 app.get("/owner/dashboard", ownerOnly, async (req, res) => {
   const orders = await Order.find().populate("product").sort({ createdAt: -1 });
   res.render("Allpags/dashboard.ejs", { orders });
+});
+
+// Razorpay order create
+app.post("/create-order", async (req, res) => {
+  const { amount } = req.body;
+  const options = {
+    amount: amount * 100,
+    currency: "INR",
+    receipt: "order_" + Date.now(),
+  };
+  const order = await razorpay.orders.create(options);
+  res.json(order);
+});
+
+// Payment verify
+app.post("/verify-payment", async (req, res) => {
+  const {
+    razorpay_order_id,
+    razorpay_payment_id,
+    razorpay_signature,
+    orderData,
+  } = req.body;
+  const crypto = require("crypto");
+  const hmac = crypto.createHmac("sha256", process.env.RAZORPAY_KEY_SECRET);
+  hmac.update(razorpay_order_id + "|" + razorpay_payment_id);
+  const generated_signature = hmac.digest("hex");
+
+  if (generated_signature === razorpay_signature) {
+    const { product, customerName, phone, address, quantity, pricePerKg } =
+      orderData;
+    const totalPrice = parseFloat(quantity) * parseFloat(pricePerKg);
+    const newOrder = new Order({
+      product,
+      customerName,
+      phone,
+      address,
+      quantity,
+      totalPrice,
+    });
+    await newOrder.save();
+    const populatedOrder = await Order.findById(newOrder._id).populate(
+      "product",
+    );
+    await sendSMS(
+      process.env.OWNER_PHONE,
+      `New Order! Customer: ${customerName}, Product: ${populatedOrder.product.name}, Qty: ${quantity}kg, Total: Rs.${totalPrice}, Phone: ${phone}`,
+    );
+    res.json({ success: true, orderId: newOrder._id });
+  } else {
+    res.json({ success: false, message: "Payment verification failed!" });
+  }
+});
+
+// Order success page
+app.get("/orders/success/:id", async (req, res) => {
+  const order = await Order.findById(req.params.id).populate("product");
+  req.flash("success", "Payment successful! Order placed!");
+  res.render("Allpags/order-success.ejs", { order });
 });
 
 app.listen(process.env.PORT || 3000, () => {
