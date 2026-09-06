@@ -110,11 +110,11 @@
 </section>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
-  var pricePerKg = parseInt('<%= product.price %>');
-  var productId = '<%= product._id %>';
+  let pricePerKg = parseInt('<%= product.price %>');
+  let productId = '<%= product._id %>';
 
   function calcTotal(qty) {
-    var total = pricePerKg * parseFloat(qty || 0);
+    let total = pricePerKg * parseFloat(qty || 0);
     if (total > 0) {
       document.getElementById('totalDisplay').style.display = 'flex';
       document.getElementById('totalAmt').innerText = 'Rs. ' + total.toFixed(2);
@@ -124,7 +124,7 @@
   }
 
   function toggleOrderForm() {
-    var form = document.getElementById('orderForm');
+    let form = document.getElementById('orderForm');
     if (form.style.display === 'none') {
       form.style.display = 'block';
       form.scrollIntoView({ behavior: 'smooth' });
@@ -134,26 +134,26 @@
   }
 
   async function initiatePayment() {
-    var customerName = document.getElementById('customerName').value;
-    var phone = document.getElementById('phone').value;
-    var address = document.getElementById('address').value;
-    var quantity = document.getElementById('quantity').value;
+    let customerName = document.getElementById('customerName').value;
+    let phone = document.getElementById('phone').value;
+    let address = document.getElementById('address').value;
+    let quantity = document.getElementById('quantity').value;
 
     if (!customerName || !phone || !address || !quantity) {
       alert('Please fill all fields!');
       return;
     }
 
-    var totalAmount = pricePerKg * parseFloat(quantity);
+    let totalAmount = pricePerKg * parseFloat(quantity);
 
-    var response = await fetch('/create-order', {
+    let response = await fetch('/create-order', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ amount: totalAmount })
     });
-    var order = await response.json();
+    let order = await response.json();
 
-    var options = {
+    let options = {
       key: '<%= razorpayKey %>',
       amount: order.amount,
       currency: 'INR',
@@ -161,7 +161,7 @@
       description: '<%= product.name %>',
       order_id: order.id,
       handler: async function(paymentResponse) {
-        var verifyResponse = await fetch('/verify-payment', {
+        let verifyResponse = await fetch('/verify-payment', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -178,7 +178,7 @@
             }
           })
         });
-        var result = await verifyResponse.json();
+        let result = await verifyResponse.json();
         if (result.success) {
           window.location.href = '/orders/success/' + result.orderId;
         } else {
@@ -194,7 +194,7 @@
       }
     };
 
-    var rzp = new Razorpay(options);
+    let rzp = new Razorpay(options);
     rzp.open();
   }
 </script>

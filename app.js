@@ -43,6 +43,7 @@ const upload = multer({ storage });
 
 app.engine("ejs", ejsMate);
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "/public")));
 app.set("view engine", "ejs");
@@ -252,6 +253,7 @@ app.get("/owner/dashboard", ownerOnly, async (req, res) => {
 // Razorpay order create
 app.post("/create-order", async (req, res) => {
   const { amount } = req.body;
+  console.log("Amount received:", amount);
   const options = {
     amount: amount * 100,
     currency: "INR",
