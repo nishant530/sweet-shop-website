@@ -134,6 +134,7 @@
   }
 
   async function initiatePayment() {
+    console.log("Key Value Received:", '<%= razorpayKey %>'); // Debug Line
     let customerName = document.getElementById('customerName').value;
     let phone = document.getElementById('phone').value;
     let address = document.getElementById('address').value;
