@@ -1,0 +1,22 @@
+{
+  "name": "Jodhpur Mishthan Bhandar",
+  "short_name": "JMB",
+  "description": "Authentic Rajasthani Sweets",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FDF6E3",
+  "theme_color": "#E8821A",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/images/JMBlogo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/JMBlogo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
